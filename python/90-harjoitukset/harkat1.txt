@@ -1,0 +1,3 @@
+Python exercises with solutions:
+
+https://pynative.com/python-basic-exercise-for-beginners/
