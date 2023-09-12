@@ -1,0 +1,7 @@
+Kirjasto:
+
+Luodaan Kirjasto. Meillä on Book ja Library luokat. Book sisältää numeraalisen id:n, kirjan nimen, kirjailijan nimen, sivumäärän, genren ja onko kirja lainassa. Aluksi Libraryyn tehdään __init__ funktiossa lista, johon lisätään vähintään viisi kirjaa. Lisätään funktiot kirjan lainaamiselle ja palauttamiselle id:n avulla. Lisäks funktiot listaamaan kirjat erotellen lainassa olevat muista kirjoista.
+
+Mainissa pyöritetään while loopissa kyselyä, että mitä käyttäjä haluaa tehdä kunnes q eli quit.
+
+Bonus: Lisää kirjojen lisääminen Libraryyn. 
