@@ -1,0 +1,8 @@
+Laskukone:
+
+Tehdään laskukone. Aluksi käyttäjä laittaa ensimmäisen numeron.
+Tämän jälkeen loopissa kysellään matemaattinen operaatio ja numero.
+Looppi loppuu ja lopullinen vastaus annetaan, kun käyttäjä vastaa "bye".
+Muista välitulos jokaisen loopin kerroksen välillä. Tee varsinainen 
+laskeminen erillisissä funktioissa. Vähintään lisääminen, vähentäminen,
+kertolasku ja jakolasku. Muitakin saa tehdä.

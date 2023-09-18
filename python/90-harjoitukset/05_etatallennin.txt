@@ -1,0 +1,11 @@
+Etätallennin
+
+Hyödyntäen socketteja luo palvelin, jolle voi lähettää viestejä. Palvelin
+tallentaa viestit tiedostoon ja pyydettäessä lähettää tiedoston tiedot takaisin.
+Luo asiakasohjelma, joka hyödyntää tätä palvelinta.
+
+Palvelin odottaa ikuisessa loopissa, että yhteys aukeaa ja sitten palvelin kuuntelee
+viestin. Jos viestinä on erikseen valittu viesti esim. "viestit", niin palvelin lukee
+tallennustiedoston ja lähettää sen sisällön socketin kautta asiakasohjelmalle. Muuten
+viesti tallennetaan (append moodi) tallennustiedostoon ja yhteys katkaistaan. Joka tapauksessa 
+palvelin palaa odottamaan uutta yhteyttä.
