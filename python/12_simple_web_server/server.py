@@ -1,5 +1,5 @@
 import socket
-
+import os
 def handle_request(request):
     
     headers = request.split('\n')
@@ -20,7 +20,7 @@ def handle_request(request):
     return response
 
 def main():
-    
+    print(os.getcwd())
     SERVER_ADDRESS = "127.0.0.1"
     SERVER_PORT = 8080
     
@@ -34,7 +34,8 @@ def main():
         
         request = conn.recv(1024).decode()
         print(request)
-        
+        if not request:
+            continue
         response = handle_request(request)
         conn.sendall(response.encode())
         
