@@ -8,6 +8,8 @@ create_table_sql = """CREATE TABLE IF NOT EXISTS contacts (
     phone VARCHAR(20)
 )"""
 
+get_contacts_sql = "SELECT * FROM contacts"
+
 def get_connection():
     conn = None
     try:
@@ -27,3 +29,15 @@ def create_contact_table():
         print("Success in create contact table")
     except:
         print("Failed to create table")
+        
+def get_contacts():
+    conn = get_connection()
+    if conn == None:
+        return None
+    try:
+        c = conn.cursor()
+        contacts = c.execute(get_contacts_sql)
+        return contacts.fetchall()
+    except:
+        print("Failed to get contacts")
+        return None
