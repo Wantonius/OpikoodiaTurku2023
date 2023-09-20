@@ -12,6 +12,8 @@ get_contacts_sql = "SELECT * FROM contacts"
 
 add_new_data_sql = "INSERT INTO contacts(firstname,lastname,email,phone) VALUES(?,?,?,?)"
 
+remove_row_sql = "DELETE FROM contacts WHERE id=?"
+
 def get_connection():
     conn = None
     try:
@@ -56,4 +58,17 @@ def add_new_contact(data):
         return "Success"
     except:
         print("Failed to add new contact")
+        return None
+        
+def remove_contact(id):
+    conn = get_connection()
+    if conn == None:
+        return None
+    try:
+        c = conn.cursor()
+        c.execute(remove_row_sql,(id,))
+        conn.commit()
+        return "Success"
+    except:
+        print("Failed to remove contact")
         return None
