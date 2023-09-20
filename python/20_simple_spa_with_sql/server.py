@@ -1,5 +1,5 @@
 from flask import Flask,jsonify,request,send_file
-from data.connector import create_contact_table,get_contacts,add_new_contact,remove_contact
+from data.connector import create_contact_table,get_contacts,add_new_contact,remove_contact,edit_contact
 
 app = Flask(__name__,static_url_path="",static_folder="public")
 
@@ -41,5 +41,11 @@ def handle_remove_and_edit(id):
         if success == None:
             return "Internal Server Error",500
         return "Success",200
-    
+    else:
+        data = request.json
+        success = edit_contact(data,id)
+        if success == None:
+            return "Internal Server Error",500
+        return "Success",200
+        
 app.run("127.0.0.1",port=8080)
