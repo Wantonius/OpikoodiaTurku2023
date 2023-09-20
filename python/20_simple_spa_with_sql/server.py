@@ -1,11 +1,16 @@
-from flask import Flask,jsonify,request
+from flask import Flask,jsonify,request,send_file
 from data.connector import create_contact_table,get_contacts,add_new_contact
 
 app = Flask(__name__,static_url_path="",static_folder="public")
 
 create_contact_table()
 
-@app.route("/api/contacts",methods=["GET","POST"])
+@app.route("/")
+@app.route("/index")
+def index():
+    return send_file("public/index.html")
+
+@app.route("/api/contact",methods=["GET","POST"])
 def fetch_contacts():
     if request.method == "GET":
         temp_contacts = get_contacts()
