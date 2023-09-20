@@ -10,6 +10,8 @@ create_table_sql = """CREATE TABLE IF NOT EXISTS contacts (
 
 get_contacts_sql = "SELECT * FROM contacts"
 
+add_new_data_sql = "INSERT INTO contacts(firstname,lastname,email,phone) VALUES(?,?,?,?)"
+
 def get_connection():
     conn = None
     try:
@@ -40,4 +42,16 @@ def get_contacts():
         return contacts.fetchall()
     except:
         print("Failed to get contacts")
+        return None
+        
+def add_new_contact(data):
+    conn = get_connection()
+    if conn == None:
+        return None
+    try:
+        c = conn.cursor()
+        c.execute(add_new_data_sql,data)
+        return "Success"
+    except:
+        print("Failed to add new contact")
         return None
