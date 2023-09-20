@@ -8,10 +8,18 @@ create_contact_table()
 @app.route("/api/contacts",methods=["GET","POST"])
 def fetch_contacts():
     if request.method == "GET":
-        contacts = get_contacts()
-        print(contacts)
-        if contacts == None:
+        temp_contacts = get_contacts()
+        if temp_contacts == None:
             return "Internal Server Error",500
+        contacts = []
+        for i in range(len(temp_contacts)):
+            contacts.append({
+                "id":temp_contacts[i][0],
+                "firstname":temp_contacts[i][1],
+                "lastname":temp_contacts[i][2],
+                "email":temp_contacts[i][3],
+                "phone":temp_contacts[i][4]
+            })
         return jsonify(contacts)
     else:
         data = request.json
