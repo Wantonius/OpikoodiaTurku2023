@@ -50,7 +50,9 @@ def add_new_contact(data):
         return None
     try:
         c = conn.cursor()
-        c.execute(add_new_data_sql,data)
+        data_tuple=(data["firstname"],data["lastname"],data["email"],data["phone"])
+        c.execute(add_new_data_sql,data_tuple)
+        conn.commit()
         return "Success"
     except:
         print("Failed to add new contact")
