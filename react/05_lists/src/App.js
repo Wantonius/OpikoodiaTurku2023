@@ -1,5 +1,6 @@
 import {useState} from 'react';
 import './App.css';
+import ContactForm from './components/ContactForm';
 
 function App() {
 	
@@ -30,7 +31,7 @@ function App() {
 	
 	return (
 		<div className="App">
-
+			<ContactForm addContact={addContact}/>
 		</div>
 	);
 }
