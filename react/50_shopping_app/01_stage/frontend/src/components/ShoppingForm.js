@@ -30,6 +30,41 @@ const ShoppingForm = (props) => {
 		})
 	}
 	
+	return(
+		<div style={{
+			backgroundColor:"lightgreen",
+			margin:"auto",
+			width:"40%",
+			textAlign:"center"
+		}}>
+			<form className="mb-5" onSubmit={onSubmit}>
+				<label htmlFor="type" className="form-label">Type</label>
+				<input type="text"
+						name="type"
+						id="type"
+						className="form-control"
+						onChange={onChange}
+						value={state.type}/>
+				<label htmlFor="count" className="form-label">Count</label>
+				<input type="number"
+						name="count"
+						id="count"
+						className="form-control"
+						onChange={onChange}
+						value={state.count}/>
+				<label htmlFor="price" className="form-label">Price</label>
+				<input type="number"
+						name="price"
+						id="price"
+						step="0.01"
+						className="form-control"
+						onChange={onChange}
+						value={state.price}/>
+				<input type="submit" className="btn btn-primary" value="Add"/>
+			</form>
+		</div>
+	)
+	
 }
 
 export default ShoppingForm;
