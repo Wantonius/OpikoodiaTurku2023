@@ -39,7 +39,9 @@ function App() {
 						})
 						return;
 					case "additem":
-						getList()
+					case "removeitem":
+					case "edititem":
+						getList();
 					default:
 						return;
 				}
@@ -50,6 +52,12 @@ function App() {
 						return;
 					case "additem":
 						console.log("Failed to add new item. Server responded with a status "+response.status+" "+response.statusText)
+						return;
+					case "removeitem":
+						console.log("Failed to remove item. Server responded with a status "+response.status+" "+response.statusText)
+						return;
+					case "edititem":
+						console.log("Failed to edit item. Server responded with a status "+response.status+" "+response.statusText)
 						return;
 					default:
 						return;
@@ -84,6 +92,30 @@ function App() {
 				body:JSON.stringify(item)
 			},
 			action:"additem"
+		})
+	}
+	
+	const removeItem = (id) => {
+		setUrlRequest({
+			url:"/api/shopping/"+id,
+			request:{
+				method:"DELETE"
+			},
+			action:"removeitem"
+		})
+	}
+	
+	const editItem = (item) => {
+		setUrlRequest({
+			url:"/api/shopping/"+item.id,
+			request:{
+				method:"PUT",
+				headers:{
+					"Content-type":"application/json"
+				},
+				body:JSON.stringify(item)
+			},
+			action:"edititem"
 		})
 	}
 	
