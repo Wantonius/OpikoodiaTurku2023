@@ -2,6 +2,7 @@ import logo from './logo.svg';
 import './App.css';
 import {useState,useEffect} from 'react';
 import ShoppingForm from './components/ShoppingForm';
+import ShoppingList from './components/ShoppingList';
 
 function App() {
 	
@@ -42,6 +43,7 @@ function App() {
 					case "removeitem":
 					case "edititem":
 						getList();
+						return;
 					default:
 						return;
 				}
@@ -122,6 +124,7 @@ function App() {
 	return (
 		<div className="App">
 			<ShoppingForm addItem={addItem}/>
+			<ShoppingList list={state.list} removeItem={removeItem} editItem={editItem}/>
 		</div>
 	);
 }
