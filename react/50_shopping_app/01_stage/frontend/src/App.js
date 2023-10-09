@@ -73,6 +73,10 @@ function App() {
 		
 	},[urlRequest])
 	
+	useEffect(() => {
+		getList();
+	},[])
+	
 	//REST API
 	
 	const getList = () => {
@@ -128,7 +132,8 @@ function App() {
 			<Navbar/>
 			<Routes>
 				<Route path="/" element={<ShoppingList list={state.list} removeItem={removeItem} editItem={editItem}/>}/>
-				<Route path="/form" element={<ShoppingForm addItem={addItem}/>}/>			
+				<Route path="/form" element={<ShoppingForm addItem={addItem}/>}/>
+				<Route path="*" element={<Navigate to="/"/>}/>
 			</Routes>
 		</div>
 	);
