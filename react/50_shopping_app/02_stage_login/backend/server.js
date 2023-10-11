@@ -113,6 +113,19 @@ app.post("/login",function(req,res) {
 	return res.status(401).json({"Message":"Unauthorized"});
 })
 
+app.post("/logout",function(req,res) {
+	if(!req.headers.token) {
+		return res.status(404).json({"Message":"Not found"});
+	}
+	for(let i=0;i<loggedSessions.length;i++) {
+		if(req.headers.token === loggedSessions[i].token) {
+			loggedSessions.splice(i,1);
+			return res.status(200).json({"Message":"Logged out"});
+		}
+	}
+	return res.status(404).json({"Message":"Not found"});
+})
+
 app.use("/api",isUserLogged,shoppingroute);
 
 console.log("Running in port",port);

@@ -9,7 +9,12 @@ import {Route,Routes,Navigate} from 'react-router-dom';
 function App() {
 	
 	const [state,setState] = useState({
-		list:[]
+		list:[],
+		isLogged:false,
+		loading:false,
+		token:"",
+		error:"",
+		user:""
 	})
 	
 	const [urlRequest,setUrlRequest] = useState({
@@ -17,6 +22,57 @@ function App() {
 		request:{},
 		action:""
 	})
+	
+	//HELPER FUNCTIONS
+	
+	const saveToStorage = (state) => {
+		sessionStorage.setItem("state",JSON.stringify(state));
+	}
+	
+	const setLoading = (loading) => {
+		setState((state) => {
+			return {
+				...state,
+				error:"",
+				loading:loading
+			}
+		})
+	}
+	
+	const setError = (error) => {
+		setState((state) => {
+			let tempState = {
+				...state,
+				error:error
+			}
+			saveToStorage(tempState);
+			return tempState;
+		})
+	}
+	
+	const setUser = (user) => {
+		setState((state) => {
+			let tempState = {
+				...state,
+				user:user
+			}
+			saveToStorage(tempState);
+			return tempState;
+		})
+	}
+	
+	const clearState = (error) => {
+		let tempState = {
+			list:[],
+			isLogged:false,
+			loading:false,
+			token:"",
+			user:"",
+			error:error
+		}
+		saveToStorage(tempState);
+		setState(tempState);
+	}
 	
 	useEffect(() => {
 		
@@ -74,16 +130,29 @@ function App() {
 	},[urlRequest])
 	
 	useEffect(() => {
-		getList();
+		if(sessionStorage.getItem("state")) {
+			let state = JSON.parse(sessionStorage.getItem("state"));
+			setState(state);
+			if(state.isLogged) {
+				getList(state.token);
+			}
+		}
 	},[])
 	
 	//REST API
 	
-	const getList = () => {
+	const getList = (token) => {
+		let tempToken = state.token;
+		if(token) {
+			tempToken = token
+		}
 		setUrlRequest({
 			url:"/api/shopping",
 			request:{
-				method:"GET"
+				method:"GET",
+				headers:{
+					"token":tempToken
+				}
 			},
 			action:"getlist"
 		})
@@ -95,7 +164,8 @@ function App() {
 			request:{
 				method:"POST",
 				headers:{
-					"Content-type":"application/json"
+					"Content-type":"application/json",
+					"token":state.token
 				},
 				body:JSON.stringify(item)
 			},
@@ -107,7 +177,10 @@ function App() {
 		setUrlRequest({
 			url:"/api/shopping/"+id,
 			request:{
-				method:"DELETE"
+				method:"DELETE",
+				headers:{
+					"token":state.token
+				}
 			},
 			action:"removeitem"
 		})
@@ -119,7 +192,8 @@ function App() {
 			request:{
 				method:"PUT",
 				headers:{
-					"Content-type":"application/json"
+					"Content-type":"application/json",
+					"token":state.token
 				},
 				body:JSON.stringify(item)
 			},
