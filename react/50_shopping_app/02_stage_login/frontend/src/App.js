@@ -80,9 +80,11 @@ function App() {
 			if(!urlRequest.url) {
 				return;
 			}
+			setLoading(true);
 			const response = await fetch(urlRequest.url,urlRequest.request)
+			setLoading(false);
 			if(!response) {
-				console.log("Server did not respond!");
+				setError("Server never responded. Try again later.");
 				return;
 			}
 			if(response.ok) {
@@ -90,11 +92,16 @@ function App() {
 					case "getlist":
 						const data = await response.json();
 						if(!data) {
-							console.log("Failed to parse shopping data");
+							setError("Failed to parse shopping data");
 							return;
 						}
-						setState({
-							list:data
+						setState((state) => {
+							let tempState = {
+								...state,
+								list:data
+							}
+							saveToStorage(tempState);
+							return tempState;
 						})
 						return;
 					case "additem":
@@ -102,22 +109,63 @@ function App() {
 					case "edititem":
 						getList();
 						return;
+					case "register":
+						setError("Register success");
+						return;
+					case "login":
+						const temp = await response.json();
+						if(!temp) {
+							setError("Failed to parse login information. Try again later.");
+							return;
+						}
+						setState((state) => {
+							let tempState = {
+								...state,
+								isLogged:true,
+								token:temp.token
+							}
+							saveToStorage(tempState);
+							return tempState;
+						})
+						getList(temp.token);
+						return;
+					case "logout":
+						clearState("");
+						return;
 					default:
 						return;
 				}
 			} else {
+				if(response.status === 403) {
+					clearState("Your session has expired. Logging you out.")
+					return;
+				}
+				let errorMessage = " Server responded with a status "+response.status+" "+response.statusText
 				switch(urlRequest.action) {
 					case "getlist":
-						console.log("Failed to fetch shopping list. Server responded with a status "+response.status+" "+response.statusText)
+						setError("Failed to fetch shopping list. Server responded with a status "+response.status+" "+response.statusText)
 						return;
 					case "additem":
-						console.log("Failed to add new item. Server responded with a status "+response.status+" "+response.statusText)
+						setError("Failed to add new item. Server responded with a status "+response.status+" "+response.statusText)
 						return;
 					case "removeitem":
-						console.log("Failed to remove item. Server responded with a status "+response.status+" "+response.statusText)
+						setError("Failed to remove item. Server responded with a status "+response.status+" "+response.statusText)
 						return;
 					case "edititem":
-						console.log("Failed to edit item. Server responded with a status "+response.status+" "+response.statusText)
+						setError("Failed to edit item. Server responded with a status "+response.status+" "+response.statusText)
+						return;
+					case "register":
+						if(response.status === 409) {
+							setError("Username is already in use");
+							return;
+						}
+						setError("Register failed."+errorMessage);
+						return;
+					case "login":
+						setError("Login failed."+errorMessage);
+						return;
+					case "logout":
+						clearState("Server responded with an error. Logging you out.");
 						return;
 					default:
 						return;
@@ -198,6 +246,51 @@ function App() {
 				body:JSON.stringify(item)
 			},
 			action:"edititem"
+		})
+	}
+	
+	//LOGIN API
+	
+	const register = (user) => {
+		setUrlRequest({
+			url:"/register",
+			request:{
+				method:"POST",
+				headers:{
+					"Content-type":"application/json"
+				},
+				body:JSON.stringify(user)
+			},
+			action:"register"
+		})
+	}
+
+	const login = (user) => {
+		setUser(user.username);
+		setUrlRequest({
+			url:"/login",
+			request:{
+				method:"POST",
+				headers:{
+					"Content-type":"application/json"
+				},
+				body:JSON.stringify(user)
+			},
+			action:"login"
+		})
+	}
+
+	const logout = () => {
+		setUrlRequest({
+			url:"/logout",
+			request:{
+				method:"POST",
+				headers:{
+					"Content-type":"application/json",
+					"token":state.token
+				}
+			},
+			action:"logout"
 		})
 	}
 	
