@@ -24,6 +24,27 @@ const createToken = () => {
 	return token.toString("hex");
 }
 
+const isUserLogged = (req,res,next) => {
+	if(!req.headers.token) {
+		return res.status(403).json({"Message":"Forbidden"});
+	}
+	for(let i=0;i<loggedSessions.length;i++) {
+		if(req.headers.token === loggedSessions[i].token) {
+			let now = Date.now();
+			if(now > loggedSessions[i].ttl) {
+				loggedSessions.splice(i,1);
+				return res.status(403).json({"Message":"Forbidden"});
+			} else {
+				loggedSessions[i].ttl = now+time_to_live_diff;
+				req.session = {};
+				req.session.user = loggedSessions[i].user;
+				return next();
+			}
+		} 
+	}
+	return res.status(403).json({"Message":"Forbidden"});
+}
+
 //LOGIN API
 
 app.post("/register",function(req,res) {
@@ -92,7 +113,7 @@ app.post("/login",function(req,res) {
 	return res.status(401).json({"Message":"Unauthorized"});
 })
 
-app.use("/api",shoppingroute);
+app.use("/api",isUserLogged,shoppingroute);
 
 console.log("Running in port",port);
 
