@@ -28,9 +28,6 @@ mongoose.connect(url).then(
 )
 
 //LOGIN DATABASES
-
-let registeredUsers = [];
-let loggedSessions = [];
 const time_to_live_diff = 3600000;
 
 //LOGIN MIDDLEWARES
