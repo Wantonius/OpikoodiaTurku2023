@@ -1,4 +1,5 @@
 const express = require("express");
+const itemModel = require("../models/item");
 
 const router = express.Router();
 
@@ -10,8 +11,13 @@ let id = 100;
 //REST API
 
 router.get("/shopping",function(req,res) {
-	let tempDatabase = database.filter(item => item.user === req.session.user)
-	return res.status(200).json(tempDatabase);
+	let query = {"user":req.session.user}
+	itemModel.find(query).then(function(items) {
+		return res.status(200).json(items);
+	}).catch(function(error) {
+		console.log("Failed to find items. Reason",error);
+		return res.status(500).json({"Message":"Internal Server Error"});
+	})
 })
 
 router.post("/shopping", function(req,res) {
@@ -21,27 +27,28 @@ router.post("/shopping", function(req,res) {
 	if(!req.body.type) {
 		return res.status(400).json({"Message":"Bad Request"})
 	}
-	let item = {
+	let item = new itemModel({
 		"type":req.body.type,
 		"count":req.body.count,
 		"price":req.body.price,
-		"id":id,
 		"user":req.session.user
-	}
-	id++;
-	database.push(item);
-	return res.status(201).json(item);
+	})
+	item.save().then(function(item) {
+		return res.status(201).json(item);
+	}).catch(function(error) {
+		console.log("Failed to add new item. Reason",error);
+		return res.status(500).json({"Message":"Internal Server Error"});
+	})
+	
 })
 
 router.delete("/shopping/:id",function(req,res) {
-	let tempId = parseInt(req.params.id,10);
-	for(let i=0;i<database.length;i++) {
-		if(database[i].id === tempId && database[i].user === req.session.user) {
-			database.splice(i,1);
-			return res.status(200).json({"Message":"Success"});
-		}
-	}
-	return res.status(404).json({"Message":"Not found"});
+	itemModel.deleteOne({"_id":req.params.id,"user":req.session.user}).then(function() {
+		return res.status(200).json({"Message":"Success"});
+	}).catch(function(error) {
+		console.log("Failed to remove item. Reason",error);
+		return res.status(500).json({"Message":"Internal Server Error"});
+	})
 })
 
 router.put("/shopping/:id",function(req,res) {
@@ -51,21 +58,18 @@ router.put("/shopping/:id",function(req,res) {
 	if(!req.body.type) {
 		return res.status(400).json({"Message":"Bad Request"})
 	}
-	let tempId = parseInt(req.params.id,10);
 	let item = {
 		"type":req.body.type,
 		"count":req.body.count,
 		"price":req.body.price,
-		"id":tempId,
 		"user":req.session.user
 	}
-	for(let i=0;i<database.length;i++) {
-		if(database[i].id === tempId && database[i].user === req.session.user) {
-			database.splice(i,1,item);
-			return res.status(200).json({"Message":"Success"});
-		}
-	}
-	return res.status(404).json({"Message":"Not found"});
+	itemModel.replaceOne({"_id":req.params.id,"user":req.session.user},item).then(function() {
+		return res.status(204).json({"Message":"Success"})
+	}).catch(function(error) {
+		console.log("Failed to edit item. Reason",error);
+		return res.status(500).json({"Message":"Internal Server Error"});
+	})
 })
 
 module.exports = router;
