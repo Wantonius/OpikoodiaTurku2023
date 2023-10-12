@@ -2,6 +2,7 @@ const express = require("express");
 const shoppingroute = require("./routes/shoppingroute");
 const crypto = require("crypto");
 const bcrypt = require("bcrypt");
+const mongoose = require("mongoose");
 
 let app = express();
 
@@ -10,6 +11,19 @@ let app = express();
 app.use(express.json());
 
 let port = process.env.PORT || 3001;
+
+//MONGOOSE CONNECTION
+
+const mongo_url = process.env.MONGODB_URL;
+const mongo_user = process.env.MONGODB_USER;
+const mongo_password = process.env.MONGODB_PASSWORD;
+
+const url = "mongodb+srv://"+mongo_user+":"+mongo_password+"@"+mongo_url+"/shoppingdatabase?retryWrites=true&w=majority"
+
+mongoose.connect(url).then(
+() => console.log("Connected to Mongo Atlas"),
+(error) => console.log("Failed to connect to Mongo Atlas. Reason",error)
+)
 
 //LOGIN DATABASES
 
