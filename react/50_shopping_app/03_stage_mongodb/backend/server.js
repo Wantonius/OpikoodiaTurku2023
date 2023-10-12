@@ -3,6 +3,7 @@ const shoppingroute = require("./routes/shoppingroute");
 const crypto = require("crypto");
 const bcrypt = require("bcrypt");
 const mongoose = require("mongoose");
+const userModel = require("./models/user");
 
 let app = express();
 
@@ -71,23 +72,23 @@ app.post("/register",function(req,res) {
 	if(req.body.username.length < 4 || req.body.password.length < 8) {
 		return res.status(400).json({"Message":"Bad Request"});
 	}
-	for(let i=0;i<registeredUsers.length;i++) {
-		if(req.body.username === registeredUsers[i].username) {
-			return res.status(409).json({"Message":"Username already in use"});
-		}
-	}
 	bcrypt.hash(req.body.password,14,function(err,hash) {
 		if(err) {
 			console.log(err);
 			return res.status(500).json({"Message":"Internal server error"})
 		}
-		let user = {
+		let user = new userModel({
 			username:req.body.username,
 			password:hash
-		}
-		console.log(user);
-		registeredUsers.push(user);
-		return res.status(201).json({"Message":"Register success"});
+		})
+		user.save().then(function(user) {
+			return res.status(201).json({"Message":"Register success"})
+		}).catch(function(err) {
+			if(err.code === 11000) {
+				return res.status(409).json({"Message":"Username already in use"})
+			}
+			return res.status(500).json({"Message":"Internal Server Error"})
+		})
 	})
 })
 
