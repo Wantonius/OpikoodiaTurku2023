@@ -151,13 +151,12 @@ app.post("/logout",function(req,res) {
 	if(!req.headers.token) {
 		return res.status(404).json({"Message":"Not found"});
 	}
-	for(let i=0;i<loggedSessions.length;i++) {
-		if(req.headers.token === loggedSessions[i].token) {
-			loggedSessions.splice(i,1);
-			return res.status(200).json({"Message":"Logged out"});
-		}
-	}
-	return res.status(404).json({"Message":"Not found"});
+	sessionModel.deleteOne({"token":req.headers.token}).then(function() {
+		return res.status(200).json({"Message":"Logged out"})
+	}).catch(function(error) {
+		console.log("Failed to remove session in logout. Reason",error);
+		return res.status(500).json({"Message":"Internal Server Error"});
+	})
 })
 
 app.use("/api",isUserLogged,shoppingroute);
