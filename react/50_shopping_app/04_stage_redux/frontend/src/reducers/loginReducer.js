@@ -67,7 +67,7 @@ const loginReducer = (state = initialState,action) => {
 		case actionConstants.LOGIN_FAILED:
 			tempState = {
 				...state,
-				error:action.error;
+				error:action.error
 			}
 			saveToStorage(tempState);
 			return tempState;
