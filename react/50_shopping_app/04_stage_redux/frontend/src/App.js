@@ -6,9 +6,23 @@ import ShoppingList from './components/ShoppingList';
 import Navbar from './components/Navbar';
 import LoginPage from './components/LoginPage';
 import {Route,Routes,Navigate} from 'react-router-dom';
+import {useSelector} from 'react-redux';
 
 function App() {
 	
+	const appState = useSelector((state) => {
+		let error = state.shopping.error;
+		if(state.login.error) {
+			error = state.login.error;
+		}
+		return {
+			isLogged:state.login.isLogged,
+			error:error,
+			loading:state.login.loading
+		}
+	})
+	
+	//TODO: REMOVE
 	const [state,setState] = useState({
 		list:[],
 		isLogged:false,
@@ -298,13 +312,13 @@ function App() {
 	//RENDERING
 	
 	let message = <></>
-	if(state.loading) {
+	if(appState.loading) {
 		message = <h4>Loading...</h4>
 	}
-	if(state.error) {
-		message = <h4>{state.error}</h4>
+	if(appState.error) {
+		message = <h4>{appState.error}</h4>
 	}
-	if(state.isLogged) {
+	if(appState.isLogged) {
 		return (
 			<div className="App">
 				<Navbar token={state.token} user={state.user} isLogged={state.isLogged} logout={logout}/>
