@@ -1,4 +1,6 @@
 import {useState} from 'react';
+import {useSelector,useDispatch} from 'react-redux';
+import {add} from '../actions/shoppingActions';
 
 const ShoppingForm = (props) => {
 	
@@ -7,6 +9,9 @@ const ShoppingForm = (props) => {
 		count:0,
 		price:0
 	})
+	
+	const token = useSelector(state => state.login.token);
+	const dispatch = useDispatch();
 	
 	const onChange = (event) => {
 		setState((state) => {
@@ -22,7 +27,7 @@ const ShoppingForm = (props) => {
 		let item = {
 			...state
 		}
-		props.addItem(item);
+		dispatch(add(token,item));
 		setState({
 			type:"",
 			count:0,
