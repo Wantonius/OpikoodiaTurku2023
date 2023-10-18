@@ -36,9 +36,128 @@ const useAction = () => {
 				return
 			}
 			if(response.ok) {
-				
+				switch(state.action) {
+					case "getlist":
+						const list = await response.json();
+						if(!list) {
+							dispatch({
+								type:actionConstants.FETCH_LIST_FAILED,
+								error:"Failed to parse shopping information. Try again later."
+							})
+							return;
+						}
+						dispatch({
+							type:actionConstants.FETCH_LIST_SUCCESS,
+							list:list
+						})
+						return;
+					case "additem":
+						dispatch({
+							type:actionConstants.ADD_ITEM_SUCCESS
+						})
+						getList();
+						return;
+					case "removeitem":
+						dispatch({
+							type:actionConstants.REMOVE_ITEM_SUCCESS
+						})
+						getList();
+						return;
+					case "edititem":
+						dispatch({
+							type:actionConstants.EDIT_ITEM_SUCCESS
+						})
+						getList();
+						return;
+					case "register":
+						dispatch({
+							type:actionConstants.REGISTER_SUCCESS
+						})
+						return;
+					case "login":
+						let data = await response.json();
+						if(!data) {
+							dispatch({
+								type:actionConstants.LOGIN_FAILED,
+								error:"Failed to parse login information. Try again later."
+							})
+							return;
+						}
+						dispatch({
+							type:actionConstants.LOGIN_SUCCESS,
+							token:data.token
+						})
+						return;
+					case "logout":
+						dispatch({
+							type:actionConstants.LOGOUT_SUCCESS
+						})
+						return;
+					default:
+						return;
+				}
 			} else {
-				
+				if(response.status === 403) {
+					dispatch({
+						type:actionConstants.LOGOUT_FAILED,
+						error:"Your session has expired. Logging you out."
+					})
+					return;
+				}
+				let errorMessage = " Server responded with a status "+response.status+" "+response.statusText
+				switch(state.action) {
+					case "getlist":
+						dispatch({
+							type:actionConstants.FETCH_LIST_FAILED,
+							error:"Failed to fetch shopping information."+errorMessage
+						})
+						return;
+					case "additem":
+						dispatch({
+							type:actionConstants.ADD_ITEM_FAILED,
+							error:"Failed to add new item."+errorMessage
+						})
+						return;
+					case "removeitem":
+						dispatch({
+							type:actionConstants.REMOVE_ITEM_FAILED,
+							error:"Failed to remove item."+errorMessage
+						})
+						return;
+					case "edititem":
+						dispatch({
+							type:actionConstants.EDIT_ITEM_FAILED,
+							error:"Failed to edit item."+errorMessage
+						})
+						return;
+					case "register":
+						if(response.status === 409) {
+							dispatch({
+								type:actionConstants.REGISTER_FAILED,
+								error:"Username already in use"
+							})
+						} else {
+							dispatch({
+								type:actionConstants.REGISTER_FAILED,
+								error:"Register failed."+errorMessage
+							})
+						}
+						return;
+					case "login":
+						dispatch({
+							type:actionConstants.LOGIN_FAILED,
+							error:"Login failed."+errorMessage
+						})
+						return;
+					case "logout":
+						dispatch({
+							type:actionConstants.LOGOUT_FAILED,
+							error:"Serve responded with an error. Logging you out."
+						})
+						return;
+					default:
+						return;
+				}
 			}
 		}
 		
